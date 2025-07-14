@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .player-container {
+            width: 400px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .album-art {
+            width: 200px;
+            height: 200px;
+            background: #ddd;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .song-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+        .progress-container {
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            height: 5px;
+            background: #ddd;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: #4CAF50;
+            border-radius: 5px;
+        }
+        .time {
+            display: flex;
+            justify-content: space-between;
+        }
+        .lyrics {
+            height: 200px;
+            overflow-y: auto;
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="player-container">
+        <div class="album-art">
+            <!-- 专辑封面 -->
+        </div>
+        <div class="song-info">
+            <h2 class="song-title">歌曲名称</h2>
+            <p class="artist">歌手</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <div class="time">
+                <span class="current-time">0:00</span>
+                <span class="duration">3:30</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="prev-btn">⏮</button>
+            <button class="play-btn">▶</button>
+            <button class="next-btn">⏭</button>
+        </div>
+        
+        <div class="lyrics">
+            <p>歌词加载中...</p>
+        </div>
+    </div>
+
+    <script>
+        // 播放器功能将在后续实现
+        const playBtn = document.querySelector('.play-btn');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        
+        // 播放/暂停功能
+        playBtn.addEventListener('click', () => {
+            // 播放/暂停逻辑
+        });
+        
+        // 上一曲
+        prevBtn.addEventListener('click', () => {
+            // 切换上一曲逻辑
+        });
+        
+        // 下一曲
+        nextBtn.addEventListener('click', () => {
+            // 切换下一曲逻辑
+        });
+    </script>
+</body>
+</html>
