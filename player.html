@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.5/dist/jsmediatags.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Player</title>
@@ -77,7 +78,7 @@
 <body>
     <div class="player-container">
         <div class="album-art">
-            <!-- 专辑封面 -->
+            <img class="album-cover" src="" alt="专辑封面" style="width: 100%; height: 100%; object-fit: cover;" />
         </div>
         <div class="song-info">
             <h2 class="song-title">歌曲名称</h2>
@@ -106,25 +107,133 @@
     </div>
 
     <script>
-        // 播放器功能将在后续实现
         const playBtn = document.querySelector('.play-btn');
-        const prevBtn = document.querySelector('.prev-btn');
-        const nextBtn = document.querySelector('.next-btn');
-        
-        // 播放/暂停功能
-        playBtn.addEventListener('click', () => {
-            // 播放/暂停逻辑
+const prevBtn = document.querySelector('.prev-btn');
+const nextBtn = document.querySelector('.next-btn');
+const songTitle = document.querySelector('.song-title');
+const artist = document.querySelector('.artist');
+const progress = document.querySelector('.progress');
+const currentTimeEl = document.querySelector('.current-time');
+const durationEl = document.querySelector('.duration');
+const lyricsEl = document.querySelector('.lyrics');
+
+const songs = [
+    {
+        title: "定西 (2016 unplugged)",
+        artist: "未知",
+        file: "res/定西 (2016 unplugged).flac"
+    },
+    {
+        title: "结婚 (2016 unplugged)",
+        artist: "朱格乐, 张怡然, 姚斌",
+        file: "res/结婚 (2016 unplugged) 朱格乐,张怡然,姚斌.flac"
+    },
+    {
+        title: "这个世界会好吗 (2016 unplugged)",
+        artist: "未知",
+        file: "res/这个世界会好吗 (2016 unplugged).flac"
+    }
+];
+
+let currentSongIndex = 0;
+let isPlaying = false;
+const audio = new Audio();
+
+function loadSong(index) {
+    const song = songs[index];
+    audio.src = song.file;
+    songTitle.textContent = song.title;
+    artist.textContent = song.artist;
+    lyricsEl.innerHTML = "<p>歌词加载中...</p>";
+
+    // 读取FLAC封面
+    fetch(song.file)
+        .then(response => response.arrayBuffer())
+        .then(buffer => {
+            // 使用jsmediatags库解析元数据
+            jsmediatags.read(new Blob([buffer]), {
+                onSuccess: function(tag) {
+                    const pictures = tag.tags.picture;
+                    if (pictures) {
+                        let base64String = "";
+                        const data = pictures.data;
+                        for (let i = 0; i < data.length; i++) {
+                            base64String += String.fromCharCode(data[i]);
+                        }
+                        const base64 = window.btoa(base64String);
+                        const format = pictures.format;
+                        document.querySelector('.album-cover').src = `data:${format};base64,${base64}`;
+                    } else {
+                        document.querySelector('.album-cover').src = "";
+                    }
+                },
+                onError: function(error) {
+                    console.log('读取封面失败:', error);
+                    document.querySelector('.album-cover').src = "";
+                }
+            });
         });
-        
-        // 上一曲
-        prevBtn.addEventListener('click', () => {
-            // 切换上一曲逻辑
-        });
-        
-        // 下一曲
-        nextBtn.addEventListener('click', () => {
-            // 切换下一曲逻辑
-        });
+}
+
+function playSong() {
+    audio.play();
+    isPlaying = true;
+    playBtn.textContent = "⏸";
+}
+
+function pauseSong() {
+    audio.pause();
+    isPlaying = false;
+    playBtn.textContent = "▶";
+}
+
+playBtn.addEventListener('click', () => {
+    if (isPlaying) {
+        pauseSong();
+    } else {
+        playSong();
+    }
+});
+
+prevBtn.addEventListener('click', () => {
+    currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+    loadSong(currentSongIndex);
+    playSong();
+});
+
+nextBtn.addEventListener('click', () => {
+    currentSongIndex = (currentSongIndex + 1) % songs.length;
+    loadSong(currentSongIndex);
+    playSong();
+});
+
+// 更新进度条和时间
+audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+        const progressPercent = (audio.currentTime / audio.duration) * 100;
+        progress.style.width = progressPercent + '%';
+
+        let currentMinutes = Math.floor(audio.currentTime / 60);
+        let currentSeconds = Math.floor(audio.currentTime % 60);
+        let durationMinutes = Math.floor(audio.duration / 60);
+        let durationSeconds = Math.floor(audio.duration % 60);
+
+        if (currentSeconds < 10) currentSeconds = '0' + currentSeconds;
+        if (durationSeconds < 10) durationSeconds = '0' + durationSeconds;
+
+        currentTimeEl.textContent = `${currentMinutes}:${currentSeconds}`;
+        durationEl.textContent = `${durationMinutes}:${durationSeconds}`;
+    }
+});
+
+// 歌曲播放结束自动切换下一首
+audio.addEventListener('ended', () => {
+    nextBtn.click();
+});
+
+// 初始化加载第一首歌
+loadSong(currentSongIndex);
+
     </script>
 </body>
 </html>
